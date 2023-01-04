@@ -1,0 +1,58 @@
+server:
+  port: 3000
+spring:
+  application:
+    name: sb-reactive-demo
+  main:
+    allow-bean-definition-overriding: true
+  r2dbc:
+    url: r2dbc:postgresql://${com.om.example.postgres.host}/${com.om.example.postgres.database}
+    username: ${com.om.example.postgres.username}
+    password: ${com.om.example.postgres.password}
+    pool:
+      enabled: true
+      initialSize: 1
+      minIdle: ${DB_POOL_MIN_IDLE:1}
+      maxSize: ${DB_POOL_MAX_SIZE:2}
+      maxLifeTime: ${DB_POOL_MAX_LIFE_TIME_MILLIS:120000}
+      maxIdleTime: ${DB_POOL_MAX_IDLE_TIME_MILLIS:60000}
+      maxCreateConnectionTime: 30000
+      poolName: default
+  flyway:
+    locations: classpath:db/migration
+    enabled: true
+    validate-on-migrate: true
+    user: ${com.om.example.postgres.username}
+    password: ${com.om.example.postgres.password}
+    url: jdbc:postgresql://${com.om.example.postgres.host}/${com.om.example.postgres.database}
+    baseline-on-migrate: true
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: "*"
+  httpexchanges:
+    recording:
+      include: principal,request-headers,response-headers,cookie-headers,time-taken,authorization-header,remote-address,session-id
+com:
+  om:
+    example:
+      postgres:
+        database: ${POSTGRESQL_DATABASE:default}
+        host: ${POSTGRESQL_HOST:localhost}:5432
+        username: ${POSTGRESQL_USER:default}
+        password: ${POSTGRESQL_PASSWORD:default}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /docs
+    resolve-schema-properties: true
+
+  swagger-ui:
+    enabled: true
+    url: /swagger

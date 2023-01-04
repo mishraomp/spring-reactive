@@ -1,0 +1,37 @@
+version: "2.3"
+
+services:
+  sb-reactive-db:
+    container_name: database
+    environment:
+      POSTGRES_USER: default
+      POSTGRES_PASSWORD: default
+      POSTGRES_DB: default
+    hostname: database
+    image: postgres:alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - /pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U default -d default'"]
+      interval: 5s
+      timeout: 5s
+      retries: 25
+    networks:
+      - sb-reactive
+  sb-reactive:
+    container_name: spring-reactive
+    image: sb-reactive:0.0.1-SNAPSHOT
+    ports:
+      - "3010:3000"
+    networks:
+      - sb-reactive
+
+
+
+
+networks:
+  sb-reactive:
+    driver: bridge
